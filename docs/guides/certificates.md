@@ -27,7 +27,7 @@ If you are interested in reading more about how certificates work, what TLS is a
 
 Certificates consists of a public and private cryptographic key and optionally the public 'certificate chain' used to issue the final certificate. Filenames and file type used to contain certificate information can be confusing:
 - A `.pfx` (or `.p12`) file is a combined container format (PKCS#12) which can include the certificate and it's associated private key. The `.pfx` file extension is most commonly used on Windows and is the default file type produced by Certify. This type of file may optionally be encrypted with a password.
-- a PEM file (sometimes with a `.pem` extension) can be either a certificate file, a chain (a set of certificates) or a private key file. Sometimes the extensions `.crt`, `.key`, `.chain` are used but these are usually PEM (base64 encoded text) files with different purposes.  The file extensions just help you identify what the file is for, and some are interchangeable.
+- a PEM file (sometimes with a `.pem` extension) can be either a certificate file, a chain (a set of certificates) or a private key file. Sometimes the extensions `.crt`, `.key` or `.chain` are used but these are usually PEM (base64 encoded text) files with different purposes.  The file extensions just help you identify what the file is for, and some are interchangeable.
 - `.der` is a binary encoding of the same type of information and can be used for multiple certificate components (certificate files sometimes using the extension `.cer`, confusingly a `.key` file could be either a PEM encoded file or a DER encoded file).
 
 Different services can choose which file types/sources they want to support for their certificates, for instance:
