@@ -21,14 +21,15 @@ The certificate issuance service remains the responsibility of the Certificate A
 Support for the following certificate authorities is included by default:
 
 ### Let's Encrypt
-Let's Encrypt are possibly the most well-known automated certificate authority, having pioneered the process for free, trusted and automated certificates. You can find out more details about them at https://letsencrypt.org 
+Let's Encrypt are possibly the most well-known automated certificate authority, having pioneered the process for free, trusted, and automated certificates. You can find out more details about them at https://letsencrypt.org 
 
 They offer a free, automated, and open certificate authority brought to you by the nonprofit Internet Security Research Group (ISRG) https://www.abetterinternet.org/
 
 - Trusted by all major operating systems and browsers
 - Certificates issued by Let's Encrypt expire after 90 days, which means you need automated renewals to keep them active.
 - Important rate limits apply: https://letsencrypt.org/docs/rate-limits/
-- Certificates can contain up to 100 domain per certificates. Wildcard certificates (*.domain.com) are supported when using DNS validation. 
+- Certificates can contain up to 100 domains per certificate.
+- Wildcard certificates (*.domain.com) are supported when using DNS validation. 
 - See information on the [Sept 2021 root expiry](../kb/202109-letsencrypt.md)
 
 ### ZeroSSL
@@ -36,11 +37,12 @@ ZeroSSL (https://zerossl.com/) is an ACME service operated by apilayer (https://
 
 - Trusted by all major operating systems and browsers
 - Certificates expire after 90 days.
-- Certificates can contain up to 100 domain per certificates. Wildcard certificates (*.domain.com) are supported when using DNS validation. 
-- To use ZeroSSL you first need to sign up for a free account in order to get External Account Binding (EAB) credentials from the *Developer* section of their dashboard. This EAB credential can only be used once and subsequent account registrations (on other servers etc) require a new EAB to be generated.
+- Certificates can contain up to 100 domains per certificate. 
+- Wildcard certificates (*.domain.com) are supported when using DNS validation. 
+- To use ZeroSSL you first need to sign up for a free account to get External Account Binding (EAB) credentials from the *Developer* section of their dashboard. This EAB credential can only be used once and subsequent account registrations (on other servers etc) require a new EAB to be generated.
 
 ### BuyPass Go
-BuyPass are a Scandinavian certificate authority who also offer free certificates via their own ACME enabled service. https://www.buypass.com/ssl/products/acme 
+BuyPass is a Scandinavian certificate authority that also offers free certificates via its own ACME-enabled service. https://www.buypass.com/ssl/products/acme 
 
 - Trusted by all major operating systems and browsers
 - Certificates expire after 180 days.
@@ -48,15 +50,15 @@ BuyPass are a Scandinavian certificate authority who also offer free certificate
 - Certificates can contain up to 5 domains. Wildcard certificates are not supported.
 
 ### Google Cloud
-The Google Cloud Certificate Manager is an ACME enabled public certificate service. While in beta this service requires a [sign up for preview](https://cloud.google.com/blog/products/identity-security/automate-public-certificate-lifecycle-management-via--acme-client-api). Certificates are valid for up-to 90 days and can contain multiple domains or wildcards.
+The Google Cloud Certificate Manager is an ACME-enabled public certificate service. While in beta this service requires a [sign-up for preview](https://cloud.google.com/blog/products/identity-security/automate-public-certificate-lifecycle-management-via--acme-client-api). Certificates are valid for up to 90 days and can contain multiple domains or wildcards.
 
 - Trusted by all major operating systems and browsers
 - Certificates expire after 90 days (but can be configured for shorter expiry).
 - Wildcard certificates (*.domain.com) are supported when using DNS validation. 
 - To use you first need to sign up for a Google Cloud account, create a project, register for the preview then enable the public-ca API and acquire External Account Binding (EAB) credentials. This EAB credential can only be used once and subsequent account registrations (on other servers etc) require a new EAB to be generated. For more details see https://cloud.google.com/public-certificate-authority/docs/quickstart (available if you have registered for the beta preview with Google).
 
-### SSL .com
-SSL .com are an established certificate Certificate Authority who now offer basic free certificates via their own ACME enabled service. https://www.ssl.com/how-to/order-free-90-day-ssl-tls-certificates-with-acme/
+### SSL.com
+SSL.com are an established certificate Certificate Authority that now offers basic free certificates via its own ACME-enabled service. https://www.ssl.com/how-to/order-free-90-day-ssl-tls-certificates-with-acme/
 
 - Trusted by all major operating systems and browsers
 - Certificates expire after 90 days.
@@ -67,22 +69,22 @@ SSL .com are an established certificate Certificate Authority who now offer basi
 
 Before you can use a different Certificate Authority in Certify you first need to create a new ACME account for that service under `Settings` > `Certificate Authorities`. If your provider requires External Account Binding (EAB) credentials you supply these in the Advanced tab.
 
-In some situations it's useful to test the certificate request process against the *Staging* (test) version of a Certificate Authority. To use the staging version of your CA, add a new Certificate Authority account and select Staging from the Advanced tab. You can then request staging certificates for a particular managed certificate under `Certificate` > `Advanced` > `Certificate Authority`. Staging certificates are not publicly trusted, so can't be used for real websites. Some CAs do not provide a Staging API.
+In some situations, it's useful to test the certificate request process against the *Staging* (test) version of a Certificate Authority. To use the staging version of your CA, add a new Certificate Authority account and select Staging from the Advanced tab. You can then request staging certificates for a particular managed certificate under `Certificate` > `Advanced` > `Certificate Authority`. Staging certificates are not publicly trusted, so can't be used for real websites. Some CAs do not provide a Staging API.
 
 ## Custom CAs (public or self-hosted)
 You can add configuration for any certificate authority system which supports the ACME V2 (RFC8555) standard. There is a basic CA editor included in the app (enabled under `Settings` > `UI Settings` > `Certificate Authority Editor`) which can be accessed under `Settings` > `Certificate Authorities` > `Edit Certificate Authorities`. If you are confident editing JSON text files you can also manually edit `C:\ProgramData\Certify\ca.json` to add custom CAs.
 
 ## Migrating from one CA to another
 
-In the event that you want to change from one Certificate Authority to another (e.g. from Let's Encrypt to BuyPass Go), you should follow this general procedure:
+If you want to change from one Certificate Authority to another (e.g. from Let's Encrypt to BuyPass Go), you should follow this general procedure:
 * Add an account for the new CA if you don't have one already.
 * Perform a certificate request with a typical managed certificate
-    * Edit your managed certificate, choose Certificate > Advanced > Certificate Authority, choose the new CA.
+    * Edit your managed certificate, choose Certificate > Advanced > Certificate Authority, and choose the new CA.
     * Click 'Request Certificate' to perform the new certificate request.
 * Evaluate that the resulting certificate works for you and your users.
 * Optionally, change the default CA (under Settings) to the new CA and either let each certificate renew individually or force the renewal, as required.
 
-Note that if bulk migrating from one CA to another you will be subject to API rate limits with the new CA, so it may not be possible to migrate large numbers of certificates in a short period of time, unless you can contact the CA to have your rate limit increased.
+Note that if bulk migrating from one CA to another you will be subject to API rate limits with the new CA, so it may not be possible to migrate large numbers of certificates in a short period of time unless you can contact the CA to have your rate limit increased.
 
 
 ## Using untrusted root certificates (staging etc)
