@@ -3,51 +3,53 @@ id: http-validation
 title: HTTP Validation (http-01)
 ---
 ## Why use HTTP Validation?
-To request a certificate from Let's Encrypt (or any Certificate Authority), you need to provide some kind of proof that you are entitled to receive the certificate for given domain(s). Let's Encrypt support two methods of validation to prove control of your domain, `http-01` (validation over HTTP) and `dns-01` ([validation via DNS](dns/validation.md)). Wildcard domain certificates (those covering `*.yourdomain.com`) can only be requested using DNS validation.
+To request a certificate from Let's Encrypt (or any Certificate Authority), you need to provide some kind of proof that you are entitled to receive the certificate for a given domain(s). Let's Encrypt support two methods of validation to prove control of your domain, `http-01` (validation over HTTP) and `dns-01` ([validation via DNS](dns/validation.md)). Wildcard domain certificates (those covering `*.yourdomain.com`) can only be requested using DNS validation.
 
 ## How to use HTTP Validation (on Windows)
 When Let's Encrypt performs domain validation over http (known as an `http-01` challenge) they ask for a randomly named text file to be presented in the `/.well-known/acme-challenge` path of your website. So they should be able to retrieve it at `http://<yourdomain>/.well-known/acme-challenge/<filename>`
 
-**Your server must be able to respond on tcp port 80 in order to perform any HTTP validation. If your firewall blocks port 80, unblock it to proceed. You don't need IIS http bindings as by default the app will use it's own http challenge response server.**
+**Your server must be able to respond on TCP port 80 in order to perform any HTTP validation. If your firewall blocks port 80, unblock it to proceed. You don't need IIS HTTP bindings as by default the app will use its own HTTP challenge response server.**
 
 If this step succeeds, you're all set to automatically complete HTTP validation of your domain. Once completed, Let's Encrypt marks your domain (associated with your account) as 'valid' and we can then proceed with requesting the final certificate.
 
-### How Http Validation works
+### How HTTP Validation works
 
-With *Certify The Web*, we attempt to answer the http challenge using the built-in [Http Challenge Server](http-challenge-server.md) and as a fallback we use IIS (or whichever webserver is configured for port 80 http traffic, if any) by automatically detecting the website folder to write the challenge response file to, or by writing to the website path you provide in your configuration (for Apache etc).
+With *Certify The Web*, we attempt to answer the HTTP challenge using the built-in [HTTP Challenge Server](http-challenge-server.md) and, as a fallback, we use IIS (or whichever webserver is configured for port 80 HTTP traffic, if any) by automatically detecting the website folder to write the challenge response file to, or by writing to the website path you provide in your configuration (for Apache, etc).
 
 On *IIS* this process presents a few challenges, which we attempt to fix automatically:
 
 * The file does not have an extension (like .txt etc), so a static file handler usually needs to be configured to handle extension-less files
 * Existing handlers for extension-less content may intercept the request and prevent access to the file
-* If authentication (basic, forms etc) is enabled the access to the file will be restricted so this needs to be disabled
+* If authentication (basic, forms, etc) is enabled the access to the file will be restricted so this needs to be disabled
 * Due to the above, `Asp.Net` (and an app-pool) is generally required so that web.config can be supplied to override the configuration.
-* Other customizations or app requirements for the parent website may affect configuration
+* Other customizations or app requirements for the parent website may affect the configuration
 
 So in the event that we cannot automatically provide the challenge response and fallback to IIS, we attempt to auto-configure the required configuration without modifying the configuration of the parent web application, 
 this avoids app restarts for the parent application. 
 
 We create a file called **configcheck** in the `/.well-known/acme-challenge` folder and
-we cycle through a number of alternative web.config options and test each one. The testing process then makes a local http request to your website at `http://<yourdomain>/.well-known/acme-challenge/configcheck`
+we cycle through several alternative web.config options and test each one. The testing process then makes a local HTTP request to your website at `http://<yourdomain>/.well-known/acme-challenge/configcheck`
 
 If the local request fails (perhaps because the local server can't resolve itself via DNS etc) and if proxy API support is enabled, the app asks
 the https://api.certifytheweb.com server if it can access the resource instead (which also has the benefit of being external, just like the Let's Encrypt server is).
 
 ## Common Issues
 
-### Timeout during http validation
+### Timeout during HTTP validation
 Your firewall is blocking port 80. Open port TCP 80 in Windows Firewall and on any cloud hosting firewall rules you have.
 
-### Error 500, 404 or 403 (or other http error code)
-The most common problem is that auto configuration has failed to determine the best config for your system. Different editions/distributions of windows have different defaults.
+### Error 500, 404, or 403 (or other HTTP error code)
+The most common problem is that auto-configuration has failed to determine the best config for your system. Different editions/distributions of windows have different defaults.
 
 1 - Check the challenge folder exists
 
 Check that configcheck file has been created at: `wwwwroot\inetpub\*yourwebsite*\.well-known\acme-challenge`
 
-If not, check your folder permissions allow this folder/files to be created. If necessary, check the website root path is correctly mapped.
+If not, check that your folder permissions allow this folder/files to be created. If necessary, check the website root path is correctly mapped.
 
-2 - Check you can access 
+2 - Check if *you* can access the file
+
+This can be done by accessing the address below.
 
 `http://*yourdomain*/.well-known/acme-challenge/configcheck`
 
@@ -64,7 +66,7 @@ If you get an error **403** (access denied), your web application is denying acc
         </authorization>
     </system.web>
   ```
-  In addition you may need to modify the web.config of the parent web application to allow access to the `/.well-known/acme-challenge` folder:
+  Additionally, you may need to modify the web.config of the parent web application to allow access to the `/.well-known/acme-challenge` folder:
 
   ```xml
   <configuration>
